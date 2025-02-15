@@ -17,6 +17,7 @@ use System\Helpers\DateTime;
  *   "excerpt": "خلاصه ی مقاله خوب",
  *   "content_html": "<p>مقاله خوب</p>",
  *   "published_at": "1397/10/15 08:55:00",
+ *   "cover_path": "http://example.com/example.jpg",
  *   "featured_images": ["#api-Models-FileSystem"],
  *   "categories": ["#api-Models-Category"],
  *   "tags": [
@@ -32,6 +33,14 @@ class Post extends \RainLab\Blog\Models\Post
 {
     use Resource;
     
+    public $belongsToMany = [
+        'categories' => [
+            Category::class,
+            'table' => 'rainlab_blog_posts_categories',
+            'order' => 'name'
+        ]
+    ];
+    
     protected $hidden = [
         "user_id",
         "content",
@@ -39,12 +48,22 @@ class Post extends \RainLab\Blog\Models\Post
         "created_at",
         "updated_at",
         "metadata",
+        "cover",
+        "user",
+        "translations",
     ];
     
-    protected $appends = [];
+    protected $appends = [
+        "cover_path"
+    ];
     
     public function getPublishedAtAttribute()
     {
         return DateTime::output($this->attributes["published_at"]);
+    }
+    
+    public function getCoverPathAttribute()
+    {
+        return $this->cover ? $this->cover->path : "";
     }
 }

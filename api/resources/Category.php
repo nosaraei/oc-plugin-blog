@@ -29,11 +29,12 @@ class Category extends \RainLab\Blog\Models\Category
         "nest_depth",
         "nest_left",
         "nest_right",
-        "parent_id"
+        "parent_id",
+        "translations"
     ];
     
     protected $appends = [
-        "direct_children_count"
+        //"direct_children_count"
     ];
     
 }

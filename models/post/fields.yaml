@@ -26,11 +26,12 @@ secondaryTabs:
     fields:
         content:
             tab: rainlab.blog::lang.post.tab_edit
-            type: RainLab\Blog\FormWidgets\BlogMarkdown
-            cssClass: field-slim blog-post-preview
+            #type: RainLab\Blog\FormWidgets\BlogMarkdown
+            type: richeditor
+            #cssClass: field-slim blog-post-preview
             stretch: true
-            mode: split
-            sideBySide: true
+            #mode: split
+            #sideBySide: true
 
         categories:
             tab: rainlab.blog::lang.post.tab_categories
@@ -43,7 +44,13 @@ secondaryTabs:
             label: rainlab.blog::lang.post.published
             span: left
             type: checkbox
-
+            
+        cover:
+            tab: rainlab.blog::lang.post.tab_manage
+            label: کاور
+            type: fileupload
+            mode: image
+            span: right
         user:
             tab: rainlab.blog::lang.post.tab_manage
             label: rainlab.blog::lang.post.published_by
@@ -68,7 +75,11 @@ secondaryTabs:
             label: rainlab.blog::lang.post.excerpt
             type: textarea
             size: small
-
+#        tags:
+#            tab: rainlab.blog::lang.post.tab_manage
+#            label: برچسب ها
+#            type: taglist
+#            mode: relation
         featured_images:
             tab: rainlab.blog::lang.post.tab_manage
             label: rainlab.blog::lang.post.featured_images

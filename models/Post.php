@@ -32,9 +32,10 @@ class Post extends Model
      */
     public $rules = [
         'title'   => 'required',
-        'slug'    => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:rainlab_blog_posts'],
+        'slug'    => ['required', 'regex:/^[a-zالف-ی0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:rainlab_blog_posts'],
         'content' => 'required',
-        'excerpt' => ''
+        'excerpt' => '',
+        "cover" => "max:1024"
     ];
 
     /**
@@ -88,9 +89,18 @@ class Post extends Model
             Category::class,
             'table' => 'rainlab_blog_posts_categories',
             'order' => 'name'
+        ],
+        'tags' => [
+            'RainLab\Blog\Models\Tag',
+            'table' => 'rainlab_blog_posts_tags',
+            'order' => 'name'
         ]
     ];
-
+    
+    public $attachOne = [
+        'cover' => [\System\Models\File::class],
+    ];
+    
     public $attachMany = [
         'featured_images' => [\System\Models\File::class, 'order' => 'sort_order'],
         'content_images'  => \System\Models\File::class
@@ -249,6 +259,13 @@ class Post extends Model
             ->where('published_at', '<', Carbon::now())
         ;
     }
+    
+    public function scopeFilterTags($query, $tags)
+    {
+        return $query->whereHas('tags', function($q) use ($tags) {
+            $q->whereIn('id', $tags);
+        });
+    }
 
     /**
      * Lists posts for the frontend
@@ -374,7 +391,7 @@ class Post extends Model
      * @param  array                     $categories List of category ids
      * @return Illuminate\Query\Builder              QueryBuilder
      */
-    public function scopeFilterCategories($query, $categories)
+    public function scopeCategories($query, $categories)
     {
         return $query->whereHas('categories', function($q) use ($categories) {
             $q->withoutGlobalScope(NestedTreeScope::class)->whereIn('id', $categories);

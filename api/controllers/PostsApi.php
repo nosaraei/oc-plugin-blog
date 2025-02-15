@@ -48,6 +48,7 @@ class PostsApi extends Controller
         
         $posts = Post
             ::isPublished()
+            ->with("cover")
             ->basicFilter($request);
 
         if($request->category_ids)
@@ -63,12 +64,12 @@ class PostsApi extends Controller
             $posts->whereIn("slug", CoreUtils::collect($request->slugs));
         
         if($custom_fields->count() == 0 || $custom_fields->search('categories')){
-            $posts->with("categories:id,name,slug");
+            $posts->with("categories");
         }
     
-        if($custom_fields->count() == 0 || $custom_fields->search('tags')){
-            $posts->with("tags");
-        }
+//        if($custom_fields->count() == 0 || $custom_fields->search('tags')){
+//            $posts->with("tags");
+//        }
     
         if($custom_fields->count() == 0 || $custom_fields->search('featured_images')){
             $posts->with("featured_images");
@@ -81,6 +82,36 @@ class PostsApi extends Controller
         $posts->orderBy("published_at", "DESC");
     
         return $this->success($this->pagination($request, $posts, "posts"));
+    }
+    
+    /**
+     * @api {get} /blog/posts/get/{slug} Get Post Details
+     * @apiName getPostDetails
+     * @apiGroup Blog
+     *
+     * @apiSuccessExample Success-Response:
+     * HTTP/1.1 200 OK
+     * {
+     *   "ok": true,
+     *   "message": "",
+     *   "dev_message": "",
+     *   "result": {
+     *       "post": "#api-Models-Post"
+     *   }
+     * }
+     */
+    public function getPostDetails(Request $request, $slug)
+    {
+        $post = Post
+            ::isPublished()
+            ->where("slug", $slug)
+            ->with(["cover", "categories", "featured_images"])
+            ->firstOrFail();
+    
+        $post->views += 1;
+        $post->save();
+        
+        return $this->success(["post" => $post]);
     }
 
 }

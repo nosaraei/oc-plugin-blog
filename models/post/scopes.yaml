@@ -16,7 +16,7 @@ scopes:
         nameFrom: name
 
         # Apply query scope
-        scope: FilterCategories
+        scope: Categories
 
     published:
 
